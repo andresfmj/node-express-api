@@ -42,5 +42,5 @@ app.set('port', port);
 
 // init app
 app.listen(app.get('port'), 
-    () => console.log(`API is running at port ${port}`));
+    () => console.log(`Server API is running at port ${port}`));
 
