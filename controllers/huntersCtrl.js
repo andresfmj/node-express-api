@@ -23,7 +23,7 @@ const GetFriends = async (user, hunterSelected) => {
 			]
         }
 
-        const hunters = await HunterModel.find(query)
+        const hunters = await HunterModel.find(query).limit(10)
         return hunters
     } else {
         return null
