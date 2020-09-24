@@ -5,6 +5,6 @@ let userSchema = mongoose.Schema({
     hunterSelected: mongoose.ObjectId
 })
 
-let UserModel = mongoose.model('User', userSchema)
+let UserModel = mongoose.model('Users', userSchema)
 
 module.exports = UserModel
