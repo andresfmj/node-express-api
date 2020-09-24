@@ -1,10 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const mongoose = require('mongoose');
+const { GetFriends, GetRandom } = require('../controllers/huntersCtrl');
 
-// const UserModel     = require('../models/user');
-const HunterModel = require('../models/hunter');
 
 router.get('/friends', async (req, res) => {
 	const { user, hunterSelected } = req.body;
@@ -23,35 +21,15 @@ router.get('/friends', async (req, res) => {
 		})
 	}
 	
-	const hunterSel = await HunterModel.findOne({ _id: mongoose.Types.ObjectId(hunterSelected) })
-
-	if (hunterSel) {
-		// debido a que el hunterSelected especificado en el documento User,
-		// desafortunadamente no encontrará ningun cercano a su level
-		const levelSup = hunterSel.level + 10
-		const levelInf = hunterSel.level - 10
-
-		const query = {
-			"$and": [ 
-				{
-					"user": {
-						"$in": user.friends.map(i => mongoose.Types.ObjectId(i))
-					}
-				},
-				{ "level": {$gte: levelInf} }, { "level": {$lte: levelSup} }, 
-				{ "locked": false } 
-			]
-		}
-
-		const hunters = await HunterModel.find(query)
-
+	const hunters = await GetFriends(user, hunterSelected);
+	
+	if (hunters) {
 		res.status(200).json({
 			error: hunters.length > 0 ? false : true,
 			message: '',
 			rows: hunters.length,
 			results: hunters
 		})
-
 	} else {
 		res.status(404).json({
 			error: true,
@@ -72,31 +50,14 @@ router.get('/random', async (req, res) => {
 		});
 	}
 	
-	const hunterSel = await HunterModel.findOne({ _id: mongoose.Types.ObjectId(hunterSelected) })
+	const hunters = await GetRandom(user, hunterSelected);
 
-	if (hunterSel) {
-		const levelSup = hunterSel.level + 10
-		const levelInf = hunterSel.level - 10
-
-		const hunters = await HunterModel.aggregate([
-			{ 
-				$match: { 
-					$and: [ 
-						{ level: {$gte: levelInf} }, { level: {$lte: levelSup} }, 
-						{ _id: {$ne: hunterSel._id} }, 
-						{ locked: false } 
-					] 
-				} 
-			},
-			{ $sample: { size: 10 } }
-		])
-
+	if (hunters) {
 		res.status(200).json({
 			error: false,
 			message: '',
 			results: hunters
 		})
-
 	} else {
 		res.status(404).json({
 			error: true,
