@@ -52,6 +52,11 @@ All endpoints and emitted events deliver a json response like this:
 ## How to use
 Every api request can be point from any app or postman to the port specified at the APP_PORT environment variable.
 SocketIO Events can be listened at the same port.
+After you run `npm install` in the root foolder of the project, you need to run server, by typing following command:
+```
+$ npm start
+```
+And server will be running at port specified in the APP_PORT variable
 
 ### Parameters can be received like this:
 ```javascript
